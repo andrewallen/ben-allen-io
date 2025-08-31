@@ -15,6 +15,8 @@
   --dur-2: 220ms;
   --ease-1: cubic-bezier(.2,.8,.2,1);
   --ease-2: cubic-bezier(.16,.84,.44,1);
+  /* Hint UA components we support both schemes by default */
+  color-scheme: dark light;
 }
 @media (prefers-color-scheme: light){
   :root{
@@ -26,6 +28,26 @@
     --accent: #007f5f;
     --border: #e6e8ef;
   }
+}
+
+/* Explicit theme overrides via data attribute */
+:root[data-theme="dark"]{
+  --bg: #0b0c0f;
+  --surface: #12141a;
+  --text: #e6e7eb;
+  --muted: #a7acb9;
+  --brand: #62d0ff;
+  --accent: #9bffb2;
+  --border: #232632;
+}
+:root[data-theme="light"]{
+  --bg: #ffffff;
+  --surface: #f6f7fb;
+  --text: #1b1d23;
+  --muted: #4b5160;
+  --brand: #006adc;
+  --accent: #007f5f;
+  --border: #e6e8ef;
 }
 html { scroll-behavior: smooth; }
 body{
@@ -47,6 +69,7 @@ section{ padding: 64px 0; }
 /* Header */
 .site-header{ position: sticky; top:0; z-index:10; backdrop-filter: saturate(140%) blur(8px); background: color-mix(in hsl, var(--bg) 70%, transparent); border-bottom:1px solid var(--border); }
 .header-inner{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+.header-right{ display:flex; align-items:center; gap:10px; }
 .brand{ color:var(--text); text-decoration:none; font-weight:800; letter-spacing:.2px; display:flex; align-items:center; gap:10px; }
 .brand .logo{ border-radius:9px; box-shadow: var(--shadow); }
 .site-nav a{ color:var(--muted); text-decoration:none; margin-left:18px; }

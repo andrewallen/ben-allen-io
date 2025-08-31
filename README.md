@@ -53,6 +53,13 @@ Notes:
 - The site URL is set to `https://ben.allen.io` in `astro.config.mjs` and is used for canonical/OG tags.
 - In restricted environments, disable Astro telemetry to avoid permission issues: `ASTRO_TELEMETRY_DISABLED=1 npm run dev`
 
+## Theme (Light/Dark)
+
+- Tokens live in `src/styles/global.css` under `:root` with explicit overrides for `:root[data-theme="dark|light"]`.
+- System preference is respected by default via `@media (prefers-color-scheme: light)`; user choice overrides via `data-theme`.
+- An early inline script in `src/layouts/Base.astro` sets the theme before paint to avoid flashes.
+- The toggle button is in the header (Base layout) and handled by `public/scripts/theme.js` which persists to `localStorage` and updates `color-scheme`.
+
 ## Generated Assets (not committed)
 
 - `public/photos/`: Created from `photos/` during `sync`/`dev`/`build`.

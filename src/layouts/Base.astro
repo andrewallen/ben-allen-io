@@ -17,6 +17,20 @@ const ogImage = hasPoster ? new URL('/hero/poster.jpg', Astro.site).toString() :
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Set initial theme early to avoid flash of wrong theme
+      (function(){
+        try{
+          const stored = localStorage.getItem('theme');
+          const mql = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+          const system = mql && mql.matches ? 'dark' : 'light';
+          const theme = (stored === 'light' || stored === 'dark') ? stored : system;
+          const root = document.documentElement;
+          root.setAttribute('data-theme', theme);
+          root.style.colorScheme = theme;
+        }catch(e){/* no-op */}
+      })();
+    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
@@ -55,15 +69,18 @@ const ogImage = hasPoster ? new URL('/hero/poster.jpg', Astro.site).toString() :
           </svg>
           Ben Allen
         </a>
-        <details class="nav" role="navigation">
-          <summary aria-label="Toggle navigation">Menu</summary>
-          <nav class="site-nav" aria-label="Primary">
-            <a href="/">Home</a>
-            <a href="/cv">CV</a>
-            <a href="https://www.linkedin.com/in/ben-allen-uk" target="_blank" rel="noopener">LinkedIn</a>
-            <a class="btn primary" href="mailto:ben@allen.io">Hire Me</a>
-          </nav>
-        </details>
+        <div class="header-right">
+          <button id="theme-toggle" class="btn" aria-pressed="false" title="Toggle theme" aria-label="Toggle theme">Theme</button>
+          <details class="nav" role="navigation">
+            <summary aria-label="Toggle navigation">Menu</summary>
+            <nav class="site-nav" aria-label="Primary">
+              <a href="/">Home</a>
+              <a href="/cv">CV</a>
+              <a href="https://www.linkedin.com/in/ben-allen-uk" target="_blank" rel="noopener">LinkedIn</a>
+              <a class="btn primary" href="mailto:ben@allen.io">Hire Me</a>
+            </nav>
+          </details>
+        </div>
       </div>
       <div class="progress" id="progress"></div>
     </header>
@@ -135,5 +152,6 @@ const ogImage = hasPoster ? new URL('/hero/poster.jpg', Astro.site).toString() :
         });
       }
     </script>
+    <script src="/scripts/theme.js" defer></script>
   </body>
   </html>
