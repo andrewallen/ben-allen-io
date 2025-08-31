@@ -6,5 +6,43 @@
     "gardening.png",
     "suit.jpeg",
     "supermarket.png"
+  ],
+  "meta": [
+    {
+      "name": "barista.png",
+      "width": 747,
+      "height": 1024,
+      "type": "png"
+    },
+    {
+      "name": "barman.png",
+      "width": 747,
+      "height": 1024,
+      "type": "png"
+    },
+    {
+      "name": "computer.png",
+      "width": 747,
+      "height": 1024,
+      "type": "png"
+    },
+    {
+      "name": "gardening.png",
+      "width": 747,
+      "height": 1024,
+      "type": "png"
+    },
+    {
+      "name": "suit.jpeg",
+      "width": 747,
+      "height": 1024,
+      "type": "jpg"
+    },
+    {
+      "name": "supermarket.png",
+      "width": 747,
+      "height": 1024,
+      "type": "png"
+    }
   ]
 }

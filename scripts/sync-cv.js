@@ -1,6 +1,7 @@
 import { readFile, writeFile, mkdir, readdir, lstat, cp } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { imageSize } from 'image-size';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = `${__dirname}/..`;
@@ -28,6 +29,7 @@ try {
 try {
   const entries = await readdir(photosSrc);
   const images = [];
+  const meta = [];
   await mkdir(photosOut, { recursive: true });
   const photosRoot = resolve(photosSrc) + '/';
   const SIZE_LIMIT_BYTES = 20 * 1024 * 1024; // 20MB per image
@@ -67,10 +69,19 @@ try {
       continue;
     }
     images.push(name);
+    try {
+      const dim = imageSize(srcPath);
+      if (dim && dim.width && dim.height) {
+        meta.push({ name, width: dim.width, height: dim.height, type: dim.type });
+      }
+    } catch (e) {
+      console.warn(`Dims failed for ${name}: ${e.message}`);
+    }
   }
   images.sort((a,b) => a.localeCompare(b));
+  meta.sort((a,b) => a.name.localeCompare(b.name));
   await mkdir(dirname(photosManifest), { recursive: true });
-  await writeFile(photosManifest, JSON.stringify({ images }, null, 2), 'utf8');
+  await writeFile(photosManifest, JSON.stringify({ images, meta }, null, 2), 'utf8');
   console.log(`Synced ${images.length} photo(s) → ${photosOut}`);
 
   // Prepare hero image for astro:assets optimization (static import path)

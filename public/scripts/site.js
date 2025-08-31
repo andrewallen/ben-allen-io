@@ -69,13 +69,22 @@
       }
     } catch {}
 
-    // Flip cards (data-flip)
+    // Flip cards (data-flip) with aria-hidden on non-visible faces
     try {
       document.querySelectorAll('[data-flip]').forEach((el) => {
+        const front = el.querySelector('.flip-face.front');
+        const back = el.querySelector('.flip-face.back');
+        const setFaces = (flipped) => {
+          if (front) front.setAttribute('aria-hidden', flipped ? 'true' : 'false');
+          if (back) back.setAttribute('aria-hidden', flipped ? 'false' : 'true');
+        };
+        // Init state
+        setFaces(el.classList.contains('is-flipped'));
         const toggle = () => {
           el.classList.toggle('is-flipped');
-          const pressed = el.classList.contains('is-flipped');
-          el.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+          const flipped = el.classList.contains('is-flipped');
+          el.setAttribute('aria-pressed', flipped ? 'true' : 'false');
+          setFaces(flipped);
         };
         el.addEventListener('click', () => { toggle(); });
         el.addEventListener('keydown', (e) => {
@@ -84,19 +93,34 @@
       });
     } catch {}
 
-    // Hero carousel
+    // Hero carousel: aria-hide non-active slides; defer non-active src; respect reduced motion
     try {
       const container = document.querySelector('.hero-media-carousel');
       if (container) {
         const slides = Array.from(container.querySelectorAll('img'));
-        let i = 0;
+        let i = Math.max(0, slides.findIndex((s) => s.classList.contains('active')));
+        if (i === -1) i = 0;
         const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const interval = reduced ? 8000 : 5000;
-        if (slides.length > 1) {
+        const ensureSrc = (img) => {
+          if (!img) return;
+          const ds = img.getAttribute('data-src');
+          if (ds && !img.getAttribute('src')) { img.setAttribute('src', ds); }
+        };
+        const setHidden = () => {
+          slides.forEach((img, idx) => img.setAttribute('aria-hidden', idx === i ? 'false' : 'true'));
+        };
+        setHidden();
+        // Make sure active slide has its src (in case markup used data-src)
+        ensureSrc(slides[i]);
+        if (!reduced && slides.length > 1) {
+          const interval = 5000;
           setInterval(() => {
             slides[i] && slides[i].classList.remove('active');
             i = (i + 1) % slides.length;
+            // Lazy-assign src just-in-time for the next slide
+            ensureSrc(slides[i]);
             slides[i] && slides[i].classList.add('active');
+            setHidden();
           }, interval);
         }
       }

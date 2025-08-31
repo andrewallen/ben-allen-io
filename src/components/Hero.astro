@@ -46,9 +46,24 @@ const carouselSrcs: string[] = carouselList.slice(0, 5).map(n => `/photos/${n}`)
   </div>
   {carouselSrcs.length ? (
     <div class="hero-media-carousel" data-rotate>
-      {carouselSrcs.map((src, i) => (
-        <img src={src} alt="Photo of Ben Allen" class={i === 0 ? 'active' : ''} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
-      ))}
+      {heroImg ? (
+        <>
+          <Image src={heroImg} alt="Photo of Ben Allen" class="active" aria-hidden="false" loading="eager" decoding="async" fetchpriority="high" widths={[480, 720, 960, 1200]} sizes="(max-width: 980px) 100vw, 34vw" />
+          {carouselSrcs.slice(1).map((src) => (
+            <img data-src={src} alt="Photo of Ben Allen" aria-hidden="true" loading="lazy" decoding="async" />
+          ))}
+        </>
+      ) : (
+        <>
+          {carouselSrcs.map((src, i) => (
+            i === 0 ? (
+              <img src={src} alt="Photo of Ben Allen" class="active" aria-hidden="false" loading="eager" decoding="async" fetchpriority="high" />
+            ) : (
+              <img data-src={src} alt="Photo of Ben Allen" aria-hidden="true" loading="lazy" decoding="async" />
+            )
+          ))}
+        </>
+      )}
     </div>
   ) : (
     <div class="hero-media placeholder" aria-hidden="true"></div>

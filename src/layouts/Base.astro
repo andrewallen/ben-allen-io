@@ -11,6 +11,7 @@ const heroImage = preferred ? new URL(`/photos/${preferred}`, Astro.site).toStri
 const posterURL = new URL('../../public/hero/poster.jpg', import.meta.url);
 const hasPoster = (()=>{ try { return existsSync(fileURLToPath(posterURL)); } catch { return false; } })();
 const ogImage = hasPoster ? new URL('/hero/poster.jpg', Astro.site).toString() : heroImage;
+const path = Astro.url.pathname;
 ---
 <!doctype html>
 <html lang="en">
@@ -41,7 +42,6 @@ const ogImage = hasPoster ? new URL('/hero/poster.jpg', Astro.site).toString() :
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site).toString()} />
     {ogImage && <meta property="og:image" content={ogImage} />}
-    {ogImage && <link rel="preload" as="image" href={ogImage} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script type="application/ld+json">{JSON.stringify({
       '@context': 'https://schema.org',
@@ -54,6 +54,7 @@ const ogImage = hasPoster ? new URL('/hero/poster.jpg', Astro.site).toString() :
     })}</script>
   </head>
   <body>
+    <a class="skip-link" href="#top">Skip to main content</a>
     <header class="site-header">
       <div class="container header-inner">
         <a class="brand" href="/">
@@ -71,18 +72,18 @@ const ogImage = hasPoster ? new URL('/hero/poster.jpg', Astro.site).toString() :
         </a>
         <div class="header-right">
           <button id="theme-toggle" class="btn" aria-pressed="false" title="Toggle theme" aria-label="Toggle theme">Theme</button>
-          <details class="nav" role="navigation">
+          <details class="nav">
             <summary aria-label="Toggle navigation">Menu</summary>
             <nav class="site-nav" aria-label="Primary">
-              <a href="/">Home</a>
-              <a href="/cv">CV</a>
+              <a href="/" aria-current={path === '/' ? 'page' : undefined}>Home</a>
+              <a href="/cv" aria-current={path.startsWith('/cv') ? 'page' : undefined}>CV</a>
               <a href="https://www.linkedin.com/in/ben-allen-uk" target="_blank" rel="noopener">LinkedIn</a>
               <a class="btn primary" href="mailto:ben@allen.io">Hire Me</a>
             </nav>
           </details>
         </div>
       </div>
-      <div class="progress" id="progress"></div>
+      <div class="progress" id="progress" aria-hidden="true"></div>
     </header>
 
     <main id="top" class="container">

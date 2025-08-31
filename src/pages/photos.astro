@@ -2,6 +2,8 @@
 import Base from "../layouts/Base.astro";
 import photosData from "../data/photos.json";
 const images: string[] = (photosData && photosData.images) ? photosData.images : [];
+const meta = (photosData && Array.isArray(photosData.meta)) ? photosData.meta : [];
+const dims = Object.fromEntries(meta.map((m:any) => [m.name, { width: m.width, height: m.height }]));
 ---
 <Base title="Photos — Ben Allen" description="A small gallery of Ben at work and beyond.">
   <section class="content" data-reveal>
@@ -10,12 +12,14 @@ const images: string[] = (photosData && photosData.images) ? photosData.images :
       <p class="muted">No photos available yet.</p>
     ) : (
       <div class="grid photos">
-        {images.map((name) => (
-          <img src={`/photos/${name}`} alt={`Photo of Ben Allen (${name})`} loading="lazy" decoding="async" />
-        ))}
+        {images.map((name) => {
+          const d = (dims as any)[name] || {};
+          return (
+            <img src={`/photos/${name}`} alt={`Photo of Ben Allen (${name})`} loading="lazy" decoding="async" width={d.width} height={d.height} />
+          );
+        })}
       </div>
     )}
     <p><a class="btn" href="/">Back to home</a></p>
   </section>
 </Base>
-
