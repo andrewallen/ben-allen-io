@@ -1,0 +1,48 @@
+---
+import data from "../data/shift.json";
+type KPI = { label: string; value: string };
+type Step = { title: string; copy: string; image: string; alt?: string; caption?: string; kpi?: KPI[] };
+const steps = (Array.isArray(data) ? data : []) as Step[];
+const first = steps[0];
+---
+<section class="story2" data-story2>
+  <aside class="story2-map" aria-label="Shift map">
+    <ol>
+      {steps.map((s, i) => (
+        <li>
+          <button class={`dot${i===0 ? ' active' : ''}`} data-marker data-idx={i} aria-current={i===0 ? 'step' : undefined} aria-label={`Step ${i+1}: ${s.title}`}>
+            <span class="dot-inner"></span>
+          </button>
+        </li>
+      ))}
+    </ol>
+  </aside>
+  <div class="story2-media">
+    {first ? (
+      <figure>
+        <img data-media src={`/photos/${first.image}`} alt={first.alt || first.title} loading="eager" decoding="async" />
+        {first.caption && <figcaption class="muted" data-caption>{first.caption}</figcaption>}
+      </figure>
+    ) : (
+      <div class="hero-media placeholder" aria-hidden="true"></div>
+    )}
+  </div>
+  <div class="story2-steps">
+    <ol>
+      {steps.map((s, i) => (
+        <li class={`step${i===0 ? ' active' : ''}`} id={`step-${i}`} data-step data-image={`/photos/${s.image}`} data-caption={s.caption || ''}>
+          <h3>{s.title}</h3>
+          {s.kpi && s.kpi.length > 0 && (
+            <div class="kpis">
+              {s.kpi.map(k => (
+                <span class="kpi" aria-label={`${k.label}: ${k.value}`}><strong>{k.value}</strong> {k.label}</span>
+              ))}
+            </div>
+          )}
+          <p class="muted">{s.copy}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+  <script src="/scripts/shiftstory2.js" defer></script>
+</section>

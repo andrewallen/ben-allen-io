@@ -1,0 +1,52 @@
+---
+import data from "../data/shift.json";
+const steps = (Array.isArray(data) ? data : []) as Array<{title:string; copy:string; image:string; alt?:string}>;
+const first = steps[0];
+---
+<section class="story" data-story>
+  <div class="story-media">
+    {first ? (
+      <img data-media-img src={`/photos/${first.image}`} alt={first.alt || first.title} loading="eager" decoding="async" />
+    ) : (
+      <div class="hero-media placeholder" aria-hidden="true"></div>
+    )}
+  </div>
+  <div class="story-steps">
+    <div class="story-progress" aria-hidden="true"><div class="fill" data-progress></div></div>
+    <ol>
+      {steps.map((s, i) => (
+        <li class={`step${i===0 ? ' active' : ''}`} data-step data-image={`/photos/${s.image}`}> 
+          <h3>{s.title}</h3>
+          <p class="muted">{s.copy}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+  <script is:inline>
+    (function(){
+      const root = document.currentScript.closest('[data-story]');
+      if(!root) return;
+      const img = root.querySelector('[data-media-img]');
+      const steps = Array.from(root.querySelectorAll('[data-step]'));
+      const fill = root.querySelector('[data-progress]');
+      let active = 0;
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting){
+            const el = e.target; const idx = steps.indexOf(el);
+            if(idx !== -1){
+              steps.forEach(s=>s.classList.remove('active'));
+              steps[idx].classList.add('active');
+              active = idx;
+              const nextSrc = steps[idx].getAttribute('data-image');
+              if(img && nextSrc){ img.setAttribute('src', nextSrc); img.setAttribute('aria-live','polite'); }
+              if(fill){ const pc = ((idx+1)/steps.length)*100; (fill).style.height = pc+"%"; }
+            }
+          }
+        });
+      }, { root: null, rootMargin: '-30% 0px -55% 0px', threshold: 0.01 });
+      steps.forEach(s=> io.observe(s));
+    })();
+  </script>
+</section>
+

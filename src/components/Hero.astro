@@ -1,0 +1,73 @@
+---
+import photosData from "../data/photos.json";
+import { Image } from "astro:assets";
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+let heroImg: any = undefined;
+try {
+  // Static import prepared by sync script (src/images/hero.png)
+  heroImg = (await import("../images/hero.png")).default;
+} catch (e) {
+  heroImg = undefined;
+}
+// Detect optional cinemagraph assets under public/hero
+const heroDir = new URL("../../public/hero/", import.meta.url);
+const posterURL = new URL("poster.jpg", heroDir);
+const webmURL = new URL("hero.webm", heroDir);
+const mp4URL = new URL("hero.mp4", heroDir);
+const hasPoster = (()=>{ try { return existsSync(fileURLToPath(posterURL)); } catch { return false; } })();
+const hasWebm = (()=>{ try { return existsSync(fileURLToPath(webmURL)); } catch { return false; } })();
+const hasMp4 = (()=>{ try { return existsSync(fileURLToPath(mp4URL)); } catch { return false; } })();
+const hasVideo = hasPoster && (hasWebm || hasMp4);
+const images: string[] = (photosData && photosData.images) ? photosData.images : [];
+const preferred = images.find(n => /computer|portrait|supermarket|barman|barista/i.test(n)) || images[0];
+const featuredSrc = preferred ? `/photos/${preferred}` : undefined;
+// Prepare a small carousel of photos (falling back to all images)
+const carouselList = (images && images.length)
+  ? [preferred, ...images.filter(n => n !== preferred)]
+  : [];
+const carouselSrcs: string[] = carouselList.slice(0, 5).map(n => `/photos/${n}`);
+---
+<section class="hero hero-grid hero-saas">
+  <div class="hero-copy">
+    <div class="pill kicker">Available for part‑time work • High Wycombe</div>
+    <h1 class="display">Friendly <span class="hl">front‑of‑house</span> help for busy teams</h1>
+    <p class="tagline sub">Sixth Form student with Food Hygiene L2, Emergency First Aid and DBS. Customer service, EPOS and hospitality basics — reliable, quick to learn, and ready to help.</p>
+    <div class="btns prominent">
+      <a class="btn primary" href="mailto:ben@allen.io?subject=Work%20enquiry%20for%20Ben">Hire Ben</a>
+      <a class="btn ghost" href="/cv">Read CV</a>
+    </div>
+    <div class="badges small">
+      <span class="badge">Food Hygiene L2</span>
+      <span class="badge">Emergency First Aid</span>
+      <span class="badge">Basic DBS</span>
+    </div>
+    { /* Contact links removed from hero to tighten layout */ }
+  </div>
+  {carouselSrcs.length ? (
+    <div class="hero-media-carousel" data-rotate>
+      {carouselSrcs.map((src, i) => (
+        <img src={src} alt="Photo of Ben Allen" class={i === 0 ? 'active' : ''} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
+      ))}
+    </div>
+  ) : (
+    <div class="hero-media placeholder" aria-hidden="true"></div>
+  )}
+  <script is:inline>
+    // Simple rotating carousel with fade/vertical slide
+    const container = document.currentScript.previousElementSibling;
+    if (container && container.matches('.hero-media-carousel')) {
+      const slides = Array.from(container.querySelectorAll('img'));
+      let i = 0;
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const interval = reduced ? 8000 : 5000;
+      if (slides.length > 1) {
+        setInterval(() => {
+          slides[i]?.classList.remove('active');
+          i = (i + 1) % slides.length;
+          slides[i]?.classList.add('active');
+        }, interval);
+      }
+    }
+  </script>
+</section>

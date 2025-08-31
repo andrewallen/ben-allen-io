@@ -1,0 +1,46 @@
+---
+import Base from "./Base.astro";
+import "../styles/cv.css";
+const { title = 'Ben Allen — CV', description = 'Full CV for Ben Allen.' } = Astro.props;
+---
+<Base {title} {description}>
+  <section class="cv-grid">
+    <aside class="cv-aside" aria-label="On this page">
+      <div class="cv-card">
+        <h2 class="cv-title">CV</h2>
+        <nav id="cv-toc" class="cv-toc"></nav>
+      </div>
+      <div class="cv-card">
+        <h3>Quick actions</h3>
+        <div class="btns">
+          <a class="btn primary" href="mailto:ben@allen.io?subject=Regarding%20your%20CV">Contact Ben</a>
+          <a class="btn" href="#top">Back to top</a>
+        </div>
+      </div>
+    </aside>
+    <article class="cv-content">
+      <slot />
+    </article>
+  </section>
+  <script is:inline>
+    // Build a simple TOC from h2 headings
+    const toc = document.getElementById('cv-toc');
+    if (toc) {
+      const headings = Array.from(document.querySelectorAll('.cv-content h2'));
+      const slug = (s) => s.toLowerCase().trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+      const ul = document.createElement('ul');
+      headings.forEach(h => {
+        if (!h.id) h.id = slug(h.textContent||'section');
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `#${h.id}`; a.textContent = h.textContent || '';
+        li.appendChild(a); ul.appendChild(li);
+      });
+      if (headings.length) toc.appendChild(ul);
+    }
+  </script>
+</Base>
+

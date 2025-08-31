@@ -1,0 +1,30 @@
+---
+import data from "../data/testimonials.json";
+type T = { name: string; role?: string; quote: string; headshot?: string };
+const items = (Array.isArray(data) ? data : []) as T[];
+function initials(name: string){
+  try{ return name.split(/\s+/).filter(Boolean).map(p=>p[0]).slice(0,2).join('').toUpperCase(); }catch{ return 'BA'; }
+}
+---
+<section class="content testimonials" aria-label="Testimonials">
+  <h2>What people say</h2>
+  <div class="grid grid--two">
+    {items.map((t) => (
+      <figure class="tcard" data-reveal>
+        <blockquote class="quote">“{t.quote}”</blockquote>
+        <figcaption class="person">
+          {t.headshot ? (
+            <img class="avatar" src={t.headshot} alt={`${t.name} headshot`} width="48" height="48" loading="lazy" decoding="async" />
+          ) : (
+            <div class="avatar avatar--fallback" aria-hidden="true">{initials(t.name)}</div>
+          )}
+          <div>
+            <div class="name">{t.name}</div>
+            {t.role && <div class="role muted">{t.role}</div>}
+          </div>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</section>
+

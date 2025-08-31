@@ -1,0 +1,30 @@
+project:
+  name: ben-allen-io
+  description: Minimal CV repository initialized for Codex CLI.
+  owners:
+    - andrew
+
+guidance:
+  agent_readme: AGENTS.md
+
+scope:
+  include:
+    - cv.md
+    - src/**
+    - public/**
+    - scripts/**
+    - package.json
+    - astro.config.mjs
+    - Dockerfile
+    - nginx.conf
+  exclude:
+    - .git/**
+    - dist/**
+    - node_modules/**
+    - .astro/**
+
+workflows:
+  default:
+    steps:
+      - type: note
+        message: "Content-only; edit cv.md via patches."

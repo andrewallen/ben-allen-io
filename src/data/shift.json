@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Arrive early and prepare",
+    "copy": "Ben checks the rota, reviews priorities and allergen notes, and helps with opening tasks.",
+    "image": "supermarket.png",
+    "alt": "Ben checking stock and preparing a store area",
+    "caption": "Early prep avoids downstream rush.",
+    "kpi": [{"label": "Ready", "value": "10 min early"}]
+  },
+  {
+    "title": "Welcome and guide customers",
+    "copy": "Greets with a smile, manages the queue and keeps things moving during busy periods.",
+    "image": "barista.png",
+    "alt": "Ben serving at a coffee machine in a busy cafe",
+    "caption": "Clear eye contact + quick cues reduce queue anxiety.",
+    "kpi": [{"label": "Queue time", "value": "↓"}, {"label": "Satisfaction", "value": "↑"}]
+  },
+  {
+    "title": "Confident on the till",
+    "copy": "Handles EPOS basics, cash handling, refunds/exchanges, and Click & Collect pickups.",
+    "image": "barman.png",
+    "alt": "Ben working behind a counter with a till",
+    "caption": "Accuracy first; refunds escalated promptly.",
+    "kpi": [{"label": "Errors", "value": "0"}, {"label": "C&C", "value": "on time"}]
+  },
+  {
+    "title": "Stay organised and proactive",
+    "copy": "Keeps stock rotated and the area tidy, and uses checklists to track tasks.",
+    "image": "computer.png",
+    "alt": "Ben using a computer to organise notes",
+    "caption": "FIFO and tidy zones keep service flowing.",
+    "kpi": [{"label": "Zones", "value": "tidy"}]
+  },
+  {
+    "title": "Close down and handover",
+    "copy": "Restocks, cleans down, reconciles the float and shares notes for the next shift.",
+    "image": "gardening.png",
+    "alt": "Ben tidying equipment neatly",
+    "caption": "Clear notes speed up next day's open.",
+    "kpi": [{"label": "Till", "value": "balanced"}]
+  }
+]

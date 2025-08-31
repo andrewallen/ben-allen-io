@@ -1,0 +1,21 @@
+---
+import Base from "../layouts/Base.astro";
+import photosData from "../data/photos.json";
+const images: string[] = (photosData && photosData.images) ? photosData.images : [];
+---
+<Base title="Photos — Ben Allen" description="A small gallery of Ben at work and beyond.">
+  <section class="content" data-reveal>
+    <h2>Photos</h2>
+    {images.length === 0 ? (
+      <p class="muted">No photos available yet.</p>
+    ) : (
+      <div class="grid photos">
+        {images.map((name) => (
+          <img src={`/photos/${name}`} alt={`Photo of Ben Allen (${name})`} loading="lazy" decoding="async" />
+        ))}
+      </div>
+    )}
+    <p><a class="btn" href="/">Back to home</a></p>
+  </section>
+</Base>
+

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#0b0c0f" offset="0"/>
+      <stop stop-color="#12141a" offset="1"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#62d0ff" offset="0"/>
+      <stop stop-color="#9bffb2" offset="1"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g transform="translate(80,120)">
+    <rect width="96" height="96" rx="28" fill="url(#brand)"/>
+    <text x="24" y="86" font-family="'Space Grotesk', system-ui, sans-serif" font-size="64" font-weight="700" fill="#0b0c0f">BA</text>
+  </g>
+  <text x="200" y="200" font-family="'Space Grotesk', system-ui, sans-serif" font-size="64" font-weight="700" fill="#e6e7eb">Ben Allen</text>
+  <text x="200" y="260" font-family="'Inter', system-ui, sans-serif" font-size="32" fill="#a7acb9">Friendly front‑of‑house help for busy teams</text>
+</svg>
+
