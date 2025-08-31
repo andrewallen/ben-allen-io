@@ -1,0 +1,139 @@
+---
+import photosData from "../data/photos.json";
+import "../styles/fonts.css";
+import "../styles/global.css";
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+const { title = 'Ben Allen — Personal Profile', description = 'Sixth Form student · Customer Assistant · Creator' } = Astro.props;
+const images = (photosData && photosData.images) ? photosData.images : [];
+const preferred = images.find(n => /computer|portrait|supermarket|barman|barista/i.test(n)) || images[0];
+const heroImage = preferred ? new URL(`/photos/${preferred}`, Astro.site).toString() : undefined;
+const posterURL = new URL('../../public/hero/poster.jpg', import.meta.url);
+const hasPoster = (()=>{ try { return existsSync(fileURLToPath(posterURL)); } catch { return false; } })();
+const ogImage = hasPoster ? new URL('/hero/poster.jpg', Astro.site).toString() : heroImage;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#0b0c0f" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site).toString()} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <link rel="preload" as="image" href={ogImage} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="application/ld+json">{JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: 'Ben Allen',
+      email: 'mailto:ben@allen.io',
+      url: 'https://ben.allen.io',
+      sameAs: ['https://www.linkedin.com/in/ben-allen-uk'],
+      jobTitle: 'Student / Customer Assistant'
+    })}</script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="/">
+          <svg class="logo" width="28" height="28" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+            <defs>
+              <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+                <stop stop-color="#62d0ff" offset="0" />
+                <stop stop-color="#9bffb2" offset="1" />
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="48" height="48" rx="12" fill="url(#g)" />
+            <text x="12" y="31" font-family="Space Grotesk Variable, system-ui, sans-serif" font-weight="700" font-size="18" fill="#0b0c0f">BA</text>
+          </svg>
+          Ben Allen
+        </a>
+        <details class="nav" role="navigation">
+          <summary aria-label="Toggle navigation">Menu</summary>
+          <nav class="site-nav" aria-label="Primary">
+            <a href="/">Home</a>
+            <a href="/cv">CV</a>
+            <a href="https://www.linkedin.com/in/ben-allen-uk" target="_blank" rel="noopener">LinkedIn</a>
+            <a class="btn primary" href="mailto:ben@allen.io">Hire Me</a>
+          </nav>
+        </details>
+      </div>
+      <div class="progress" id="progress"></div>
+    </header>
+
+    <main id="top" class="container">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>© {new Date().getFullYear()} Ben Allen. All rights reserved.</p>
+      </div>
+    </footer>
+    <script is:inline>
+      // Reveal on scroll
+      const io = new IntersectionObserver((entries)=>{
+        for(const e of entries){
+          if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+        }
+      }, { threshold: 0.12 });
+      document.querySelectorAll('[data-reveal]').forEach(el=> io.observe(el));
+      // Stagger containers
+      const iost = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); iost.unobserve(e.target); } });
+      }, { threshold: 0.12 });
+      document.querySelectorAll('.stagger').forEach(el=> iost.observe(el));
+
+      // Count up numbers
+      function animateCount(el){
+        const target = Number(el.getAttribute('data-count')||el.textContent||0);
+        const dur = 900; const start = performance.now();
+        const fmt = new Intl.NumberFormat();
+        function tick(now){
+          const p = Math.min(1, (now-start)/dur);
+          el.textContent = fmt.format(Math.floor(target * (0.1 + 0.9*p)));
+          if(p<1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+      document.querySelectorAll('[data-count]').forEach(animateCount);
+
+      // Scroll progress
+      const bar = document.getElementById('progress');
+      const onScroll = () => {
+        const h = document.documentElement;
+        const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+        bar.style.width = (scrolled*100).toFixed(2)+"%";
+      };
+      document.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    </script>
+    <script is:inline>
+      // View Transitions for same-origin navigation (progressive)
+      if ('startViewTransition' in document) {
+        const sameOrigin = (url) => {
+          try { const u = new URL(url, location.href); return u.origin === location.origin; } catch { return false; }
+        };
+        addEventListener('click', (e) => {
+          const a = e.target.closest('a');
+          if (!a) return; if (a.target === '_blank' || a.hasAttribute('download')) return;
+          if (!sameOrigin(a.href)) return; // external link
+          const url = new URL(a.href);
+          if (url.pathname === location.pathname && url.hash) return; // in-page anchors
+          e.preventDefault();
+          document.startViewTransition(async () => {
+            // allow built-in navigation
+            location.href = a.href;
+          });
+        });
+      }
+    </script>
+  </body>
+  </html>
