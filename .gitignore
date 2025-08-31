@@ -3,3 +3,5 @@ node_modules/
 .astro/
 .DS_Store
 src/pages/cv.md
+public/photos/
+src/images/hero.png

@@ -1,11 +1,12 @@
-# ben-allen-io — Codex Initialized
+# ben-allen-io — Astro site + CV
 
-This repository now includes an Astro-based site for a gorgeous, fast personal/marketing site for Ben Allen. `cv.md` remains the single source of truth for the CV; a build script syncs it into the site.
+Astro-powered personal site for Ben Allen, optimized for clarity and speed. The root `cv.md` is the single source of truth for the CV and is synced into the site at `/cv` during dev/build.
 
-## What’s here
+## What’s Here
 
-- `cv.md`: Primary CV content in Markdown.
-- `AGENTS.md`: Project-specific guidance for Codex agents.
+- `cv.md`: Primary CV content (edit this only).
+- `photos/`: Source images (synced to the site on build/dev).
+- `AGENTS.md`: Project-specific guidance for Codex/Codex CLI agents.
 - `codex.yaml`: Lightweight project metadata to hint agent scope.
 
 ## Using Codex in this project
@@ -25,16 +26,16 @@ This repository now includes an Astro-based site for a gorgeous, fast personal/m
 
 Key paths:
 - `src/pages/index.astro`: Homepage
-- `src/pages/cv.md`: Generated from root `cv.md` on build/dev
+- `src/pages/cv.md`: Generated from root `cv.md` on build/dev (do not edit)
 - `src/layouts/Base.astro`: Shared layout + meta
 - `src/styles/global.css`: Global theme/styles
 - `public/`: Static assets copied as-is (e.g., `favicon.svg`)
-- `scripts/sync-cv.js`: Copies root `cv.md` → `src/pages/cv.md`
+- `scripts/sync-cv.js`: Syncs `cv.md`, copies `photos/` to `public/photos/`, writes `src/data/photos.json`, prepares `src/images/hero.png`
 - `Dockerfile` + `nginx.conf`: Dockerized static hosting (configured for `ben.allen.io`)
 
 ## Project Scripts
 
-- `npm run sync`: Copy `cv.md` to `src/pages/cv.md` with frontmatter
+- `npm run sync`: Sync CV + photos and regenerate manifests
 - `npm run dev`: Sync CV, then start Astro dev server
 - `npm run build`: Sync CV, then build static site to `dist/`
 - `npm run preview`: Serve the production build locally
@@ -48,9 +49,16 @@ Key paths:
 
 Notes:
 - The CV page at `/cv` is generated from the root `cv.md` on every `dev` and `build` via `scripts/sync-cv.js`.
-- The generated `src/pages/cv.md` is ignored by git; always edit the root `cv.md`.
- - The site URL is set to `https://ben.allen.io` in `astro.config.mjs` and is used for canonical/OG tags.
+- Generated `src/pages/cv.md` is ignored by git; always edit the root `cv.md`.
+- The site URL is set to `https://ben.allen.io` in `astro.config.mjs` and is used for canonical/OG tags.
 - In restricted environments, disable Astro telemetry to avoid permission issues: `ASTRO_TELEMETRY_DISABLED=1 npm run dev`
+
+## Generated Assets (not committed)
+
+- `public/photos/`: Created from `photos/` during `sync`/`dev`/`build`.
+- `src/images/hero.png`: Prepared by the sync script for `astro:assets` usage.
+
+Source control rules are configured so these generated paths are ignored. Keep your source images in `photos/`.
 
 ## Conventions
 
@@ -67,10 +75,12 @@ Notes:
 - Coolify: point to this repo with Dockerfile deployment. The image builds the site and serves static files via Nginx.
 
 What the Dockerfile does:
-- Stage 1 builds the Astro site (runs `npm install` then `npm run build`).
+- Stage 1 builds the Astro site (runs install then `npm run build`).
 - Stage 2 serves `/dist` using Nginx with gzip and long-lived cache headers for assets.
 
 If you prefer Node serving instead of Nginx, we can switch to `@astrojs/node` adapter and run the server in the container.
+
+Tip: For reproducible builds, consider using `npm ci` with a committed lockfile in the builder stage.
 
 ### Coolify Deploy (step-by-step)
 
@@ -90,6 +100,10 @@ Redeploy on changes:
 - Run locally: `npm run dev` (the CV syncs to `/cv` automatically)
 - Build/deploy: `npm run build` (syncs, then writes static HTML to `dist/`)
 - In Docker/Coolify, the same sync happens during the image build.
+
+Photos:
+- Place images in `photos/` (PNG/JPG/JPEG/WebP/GIF). They’ll be copied to `public/photos/` when you run sync/dev/build.
+- The gallery and hero use a generated manifest at `src/data/photos.json`.
 
 ## Configuration & Branding
 
