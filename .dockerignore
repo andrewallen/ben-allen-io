@@ -5,3 +5,11 @@ dist
 .gitignore
 .DS_Store
 
+# Exclude potential secrets from build context
+.env
+.env.*
+*.pem
+*.key
+*.crt
+certs/
+secrets/

@@ -78,8 +78,8 @@ Source control rules are configured so these generated paths are ignored. Keep y
 ## Docker (Coolify-ready)
 
 - Build image: `docker build -t ben-allen-io:latest .`
-- Run: `docker run -p 8080:80 ben-allen-io:latest` and open `http://localhost:8080`
-- Coolify: point to this repo with Dockerfile deployment. The image builds the site and serves static files via Nginx.
+- Run: `docker run -p 8080:8080 ben-allen-io:latest` and open `http://localhost:8080`
+- Coolify: point to this repo with Dockerfile deployment. The image builds the site and serves static files via Nginx over HTTP.
 
 What the Dockerfile does:
 - Stage 1 builds the Astro site (runs install then `npm run build`).
@@ -93,9 +93,9 @@ Tip: For reproducible builds, consider using `npm ci` with a committed lockfile 
 
 1) In Coolify, create an Application → Source: Git Repository → Dockerfile strategy
 2) Repository: this repo; Root directory: `/`; Dockerfile path: `Dockerfile`
-3) Ports: expose `80`; Healthcheck optional (Dockerfile includes it)
+3) Ports: expose `80` (map to container `8080`); Healthcheck optional (Dockerfile includes it)
 4) Environment variables: none required (static build)
-5) Domain: set to `ben.allen.io` in Coolify and enable HTTPS/auto-cert
+5) Domain: set to `ben.allen.io` in Coolify; if you need HTTPS, terminate TLS at the platform/ingress
 6) Deploy: Coolify builds the image (install → build → Nginx serve)
 
 Redeploy on changes:
@@ -125,3 +125,9 @@ Photos:
 - Port 4321 in use: `npm run dev -- --port 4322` (or any free port)
 - Missing dependencies: ensure Node 18+ and re-run `npm install`
 - Docker build slow: ensure `.dockerignore` is present (excludes `node_modules`, `.git`, etc.)
+
+## Security
+
+- Photos: avoid publishing sensitive EXIF/metadata (e.g., GPS). Recommended: strip EXIF before adding to `photos/` using a tool like `exiftool -all="" file.jpg` or your editor’s export settings. The sync step enforces extension/type checks, blocks symlinks, and skips oversized files.
+- CSP: inline scripts have been externalized; a single early theme snippet remains and is allowed via a strict SHA‑256 hash in the CSP header. If you modify that snippet in `src/layouts/Base.astro`, update the CSP hash in `nginx.conf`.
+- Docker context: secrets and cert material are excluded via `.dockerignore`. Terminate TLS at your platform if possible; otherwise, Nginx is configured with modern ciphers and headers.

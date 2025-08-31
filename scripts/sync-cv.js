@@ -1,5 +1,5 @@
-import { readFile, writeFile, mkdir, readdir, stat, cp } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { readFile, writeFile, mkdir, readdir, lstat, cp } from 'node:fs/promises';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -29,14 +29,43 @@ try {
   const entries = await readdir(photosSrc);
   const images = [];
   await mkdir(photosOut, { recursive: true });
+  const photosRoot = resolve(photosSrc) + '/';
+  const SIZE_LIMIT_BYTES = 20 * 1024 * 1024; // 20MB per image
   for (const name of entries) {
     const srcPath = join(photosSrc, name);
-    const st = await stat(srcPath);
+    // Resolve and enforce that the file stays within photos/
+    const resolved = resolve(srcPath);
+    if (!resolved.startsWith(photosRoot)) {
+      console.warn(`Skipping unsafe path outside photos/: ${name}`);
+      continue;
+    }
+    let st;
+    try {
+      st = await lstat(srcPath);
+    } catch (e) {
+      console.warn(`Skipping unreadable entry: ${name} — ${e.message}`);
+      continue;
+    }
+    // Disallow symlinks to avoid traversal/leakage
+    if (st.isSymbolicLink()) {
+      console.warn(`Skipping symlink: ${name}`);
+      continue;
+    }
     if (!st.isFile()) continue;
     const lower = name.toLowerCase();
     if (!(/\.(png|jpe?g|webp|gif)$/i.test(lower))) continue;
+    if (st.size > SIZE_LIMIT_BYTES) {
+      console.warn(`Skipping oversized image (>20MB): ${name}`);
+      continue;
+    }
     const destPath = join(photosOut, name);
-    await cp(srcPath, destPath, { force: true });
+    try {
+      // Do not dereference symlinks (belt-and-braces) and overwrite existing
+      await cp(srcPath, destPath, { force: true, dereference: false });
+    } catch (e) {
+      console.warn(`Copy failed for ${name}: ${e.message}`);
+      continue;
+    }
     images.push(name);
   }
   images.sort((a,b) => a.localeCompare(b));

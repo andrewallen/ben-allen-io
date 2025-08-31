@@ -53,21 +53,5 @@ const carouselSrcs: string[] = carouselList.slice(0, 5).map(n => `/photos/${n}`)
   ) : (
     <div class="hero-media placeholder" aria-hidden="true"></div>
   )}
-  <script is:inline>
-    // Simple rotating carousel with fade/vertical slide
-    const container = document.currentScript.previousElementSibling;
-    if (container && container.matches('.hero-media-carousel')) {
-      const slides = Array.from(container.querySelectorAll('img'));
-      let i = 0;
-      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const interval = reduced ? 8000 : 5000;
-      if (slides.length > 1) {
-        setInterval(() => {
-          slides[i]?.classList.remove('active');
-          i = (i + 1) % slides.length;
-          slides[i]?.classList.add('active');
-        }, interval);
-      }
-    }
-  </script>
+  
 </section>

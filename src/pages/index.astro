@@ -93,20 +93,7 @@ const images: string[] = (photosData && photosData.images) ? photosData.images :
     </div>
   </section>
 
-  <script is:inline>
-    // Click to flip; click again to flip back. Keyboard: Enter/Space toggles.
-    document.querySelectorAll('[data-flip]').forEach((el)=>{
-      const toggle = () => {
-        el.classList.toggle('is-flipped');
-        const pressed = el.classList.contains('is-flipped');
-        el.setAttribute('aria-pressed', pressed ? 'true' : 'false');
-      };
-      el.addEventListener('click', (e)=>{ toggle(); });
-      el.addEventListener('keydown', (e)=>{
-        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); }
-      });
-    });
-  </script>
+  
 
   <section class="content" data-reveal>
     <h2>Experience</h2>

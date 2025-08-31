@@ -94,64 +94,7 @@ const ogImage = hasPoster ? new URL('/hero/poster.jpg', Astro.site).toString() :
         <p>© {new Date().getFullYear()} Ben Allen. All rights reserved.</p>
       </div>
     </footer>
-    <script is:inline>
-      // Reveal on scroll
-      const io = new IntersectionObserver((entries)=>{
-        for(const e of entries){
-          if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
-        }
-      }, { threshold: 0.12 });
-      document.querySelectorAll('[data-reveal]').forEach(el=> io.observe(el));
-      // Stagger containers
-      const iost = new IntersectionObserver((entries)=>{
-        entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); iost.unobserve(e.target); } });
-      }, { threshold: 0.12 });
-      document.querySelectorAll('.stagger').forEach(el=> iost.observe(el));
-
-      // Count up numbers
-      function animateCount(el){
-        const target = Number(el.getAttribute('data-count')||el.textContent||0);
-        const dur = 900; const start = performance.now();
-        const fmt = new Intl.NumberFormat();
-        function tick(now){
-          const p = Math.min(1, (now-start)/dur);
-          el.textContent = fmt.format(Math.floor(target * (0.1 + 0.9*p)));
-          if(p<1) requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
-      }
-      document.querySelectorAll('[data-count]').forEach(animateCount);
-
-      // Scroll progress
-      const bar = document.getElementById('progress');
-      const onScroll = () => {
-        const h = document.documentElement;
-        const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
-        bar.style.width = (scrolled*100).toFixed(2)+"%";
-      };
-      document.addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
-    </script>
-    <script is:inline>
-      // View Transitions for same-origin navigation (progressive)
-      if ('startViewTransition' in document) {
-        const sameOrigin = (url) => {
-          try { const u = new URL(url, location.href); return u.origin === location.origin; } catch { return false; }
-        };
-        addEventListener('click', (e) => {
-          const a = e.target.closest('a');
-          if (!a) return; if (a.target === '_blank' || a.hasAttribute('download')) return;
-          if (!sameOrigin(a.href)) return; // external link
-          const url = new URL(a.href);
-          if (url.pathname === location.pathname && url.hash) return; // in-page anchors
-          e.preventDefault();
-          document.startViewTransition(async () => {
-            // allow built-in navigation
-            location.href = a.href;
-          });
-        });
-      }
-    </script>
     <script src="/scripts/theme.js" defer></script>
+    <script src="/scripts/site.js" defer></script>
   </body>
   </html>
