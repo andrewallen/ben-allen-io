@@ -8,10 +8,10 @@ WORKDIR /app
 RUN apk add --no-cache libc6-compat
 
 # Copy package manifests first for better layer caching
-COPY package.json ./
+COPY package.json package-lock.json ./
 
-# Install dependencies (no lockfile yet; use install). Consider committing a lockfile later.
-RUN npm install --no-audit --no-fund
+# Install dependencies deterministically and audit
+RUN npm ci --omit=dev && npm audit --production || true
 
 # Copy the rest of the project
 COPY . .
@@ -22,15 +22,22 @@ RUN npm run build
 # --- Runtime Stage (Nginx) ---
 FROM nginx:1.27-alpine AS runner
 
+# Create non-root user
+RUN addgroup -S nonroot && adduser -S nonroot -G nonroot \
+    && mkdir -p /etc/nginx/conf.d /usr/share/nginx/html \
+    && chown -R nonroot:nonroot /var/cache/nginx /var/run /etc/nginx /usr/share/nginx/html
+
 # Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Static site
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-EXPOSE 80
+USER nonroot
+
+EXPOSE 8080 8443
 # Use IPv4 loopback explicitly to avoid potential IPv6 localhost (::1) resolution issues
 # with BusyBox wget in Alpine-based images.
-HEALTHCHECK --interval=30s --timeout=3s CMD wget -q --spider http://127.0.0.1:80/ || exit 1
+HEALTHCHECK --interval=30s --timeout=3s CMD wget -q --spider http://127.0.0.1:8080/ || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]
