@@ -1,10 +1,12 @@
 ---
 import photosData from "../data/photos.json";
+import buildInfo from "../data/build.json";
 import "../styles/fonts.css";
 import "../styles/global.css";
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 const { title = 'Ben Allen — Personal Profile', description = 'Sixth Form student · Customer Assistant · Creator' } = Astro.props;
+const buildStr = buildInfo ? (`v${buildInfo.version}` + (buildInfo.commit && buildInfo.commit !== 'unknown' ? `+${buildInfo.commit}` : '') + ` ${buildInfo.builtAt}`) : undefined;
 const images = (photosData && photosData.images) ? photosData.images : [];
 const preferred = images.find(n => /computer|portrait|supermarket|barman|barista/i.test(n)) || images[0];
 const heroImage = preferred ? new URL(`/photos/${preferred}`, Astro.site).toString() : undefined;
@@ -42,6 +44,7 @@ const path = Astro.url.pathname;
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site).toString()} />
     {ogImage && <meta property="og:image" content={ogImage} />}
+    {buildStr && <meta name="build" content={buildStr} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script type="application/ld+json">{JSON.stringify({
       '@context': 'https://schema.org',
@@ -93,6 +96,9 @@ const path = Astro.url.pathname;
     <footer class="site-footer">
       <div class="container">
         <p>© {new Date().getFullYear()} Ben Allen. All rights reserved.</p>
+        {buildStr && (
+          <p class="muted"><small>{buildStr}</small> · <a href="/version.txt">version.txt</a></p>
+        )}
       </div>
     </footer>
     <script src="/scripts/theme.js" defer></script>

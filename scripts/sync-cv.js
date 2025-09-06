@@ -2,6 +2,7 @@ import { readFile, writeFile, mkdir, readdir, lstat, cp } from 'node:fs/promises
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { imageSize } from 'image-size';
+import { execSync } from 'node:child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = `${__dirname}/..`;
@@ -23,6 +24,30 @@ try {
 } catch (err) {
   console.error('Failed to sync cv.md:', err.message);
   process.exit(0); // do not fail the build if local file is missing
+}
+
+// Generate build/version info for display and diagnostics
+try {
+  const pkgRaw = await readFile(join(root, 'package.json'), 'utf8');
+  const pkg = JSON.parse(pkgRaw);
+  let commit = process.env.GIT_COMMIT || process.env.COMMIT_SHA || 'unknown';
+  try {
+    const out = execSync('git rev-parse --short HEAD', { cwd: root, stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+    if (out) commit = out;
+  } catch {}
+  const builtAt = new Date().toISOString();
+  const buildInfo = { version: String(pkg.version || '0.0.0'), commit, builtAt };
+  // Write for app consumption
+  const buildJsonPath = join(root, 'src/data/build.json');
+  await mkdir(dirname(buildJsonPath), { recursive: true });
+  await writeFile(buildJsonPath, JSON.stringify(buildInfo, null, 2), 'utf8');
+  // Write public artifacts
+  const versionTxt = `${buildInfo.version}+${buildInfo.commit} (${buildInfo.builtAt})\n`;
+  await writeFile(join(root, 'public/version.txt'), versionTxt, 'utf8');
+  await writeFile(join(root, 'public/version.json'), JSON.stringify(buildInfo, null, 2), 'utf8');
+  console.log(`Wrote build info → src/data/build.json & public/version.*`);
+} catch (e) {
+  console.warn('Build info generation skipped:', e.message);
 }
 
 // Copy photos/ to public/photos and generate a manifest for the site

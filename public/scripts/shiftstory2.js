@@ -2,6 +2,7 @@
   var roots = document.querySelectorAll('[data-story2]');
   if(!roots.length) return;
   var prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var smallScreen = matchMedia('(max-width: 980px)').matches;
   roots.forEach(function(root){
     var media = root.querySelector('[data-media]');
     var caption = root.querySelector('[data-caption]');
@@ -37,7 +38,8 @@
         if(e.key==='Enter' || e.key===' '){ e.preventDefault(); btn.click(); }
       });
     });
-    if(!prefersReduced){
+    // Disable parallax transform on small screens and when reduced motion is preferred
+    if(!prefersReduced && !smallScreen){
       var ticking = false;
       var onScroll = function(){
         if(ticking) return; ticking = true;
@@ -51,7 +53,8 @@
       };
       document.addEventListener('scroll', onScroll, { passive:true });
       onScroll();
+    } else {
+      if(media) media.style.transform = 'none';
     }
   });
 })();
-

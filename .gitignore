@@ -5,3 +5,5 @@ node_modules/
 src/pages/cv.md
 public/photos/
 src/images/hero.png
+public/version.*
+src/data/build.json
