@@ -1,17 +1,17 @@
 # ben-allen-io — Astro site + CV
 
-Astro-powered personal site for Ben Allen, optimized for clarity and speed. The `content/` folder is the single source of truth for editable content (e.g., `content/cv.md`) and is synced into the site at `/cv` during dev/build.
+Astro-powered personal site for Ben Allen, optimized for clarity and speed. The root `cv.md` is the single source of truth for the CV and is synced into the site at `/cv` during dev/build.
 
 ## What’s Here
 
-- `content/cv.md`: Primary CV content (edit this only).
-- `content/photos/`: Source images (synced to the site on build/dev).
+- `cv.md`: Primary CV content (edit this only).
+- `photos/`: Source images (synced to the site on build/dev).
 - `AGENTS.md`: Project-specific guidance for Codex/Codex CLI agents.
 - `codex.yaml`: Lightweight project metadata to hint agent scope.
 
 ## Using Codex in this project
 
-- Ask Codex to propose or apply edits to `content/cv.md`. Example prompts:
+- Ask Codex to propose or apply edits to `cv.md`. Example prompts:
   - “Tighten the summary section to 3–4 lines.”
   - “Add a ‘Selected Projects’ section with 3 bullet points.”
   - “Update employment dates for the last role to 2023–present.”
@@ -21,23 +21,23 @@ Astro-powered personal site for Ben Allen, optimized for clarity and speed. The 
 
 - Framework: Astro (static output)
 - Styling: CSS (no runtime framework)
-- Content source: `content/cv.md` (synced to `/cv`)
+- Content source: `cv.md` at repo root (synced to `/cv`)
 - Build artifact: `dist/` (static files)
 
 Key paths:
 - `src/pages/index.astro`: Homepage
-- `src/pages/cv.md`: Generated from `content/cv.md` on build/dev (do not edit)
+- `src/pages/cv.md`: Generated from root `cv.md` on build/dev (do not edit)
 - `src/layouts/Base.astro`: Shared layout + meta
 - `src/styles/global.css`: Global theme/styles
 - `public/`: Static assets copied as-is (e.g., `favicon.svg`)
-- `scripts/sync-cv.js`: Syncs `content/cv.md`, copies `content/photos/` to `public/photos/`, writes `src/data/photos.json`, prepares `src/images/hero.png`
-- `Dockerfile` + `ops/nginx/*.conf`: Dockerized static hosting (configured for `ben.allen.io`)
+- `scripts/sync-cv.js`: Syncs `cv.md`, copies `photos/` to `public/photos/`, writes `src/data/photos.json`, prepares `src/images/hero.png`
+- `Dockerfile` + `nginx.conf`: Dockerized static hosting (configured for `ben.allen.io`)
 
 ## Project Scripts
 
-- `npm run sync`: Sync content (CV + photos) and regenerate manifests
-- `npm run dev`: Sync content, then start Astro dev server
-- `npm run build`: Sync content, then build static site to `dist/`
+- `npm run sync`: Sync CV + photos and regenerate manifests
+- `npm run dev`: Sync CV, then start Astro dev server
+- `npm run build`: Sync CV, then build static site to `dist/`
 - `npm run preview`: Serve the production build locally
 
 ## Local Development
@@ -48,8 +48,8 @@ Key paths:
 - Preview prod build: `npm run build && npm run preview`
 
 Notes:
-- The CV page at `/cv` is generated from `content/cv.md` on every `dev` and `build` via `scripts/sync-cv.js`.
-- Generated `src/pages/cv.md` is ignored by git; always edit `content/cv.md`.
+- The CV page at `/cv` is generated from the root `cv.md` on every `dev` and `build` via `scripts/sync-cv.js`.
+- Generated `src/pages/cv.md` is ignored by git; always edit the root `cv.md`.
 - The site URL is set to `https://ben.allen.io` in `astro.config.mjs` and is used for canonical/OG tags.
 - In restricted environments, disable Astro telemetry to avoid permission issues: `ASTRO_TELEMETRY_DISABLED=1 npm run dev`
 
@@ -62,10 +62,10 @@ Notes:
 
 ## Generated Assets (not committed)
 
-- `public/photos/`: Created from `content/photos/` during `sync`/`dev`/`build`.
+- `public/photos/`: Created from `photos/` during `sync`/`dev`/`build`.
 - `src/images/hero.png`: Prepared by the sync script for `astro:assets` usage.
 
-Source control rules are configured so these generated paths are ignored. Keep your source images in `content/photos/`.
+Source control rules are configured so these generated paths are ignored. Keep your source images in `photos/`.
 
 ## Conventions
 
@@ -99,17 +99,17 @@ Tip: For reproducible builds, consider using `npm ci` with a committed lockfile 
 6) Deploy: Coolify builds the image (install → build → Nginx serve)
 
 Redeploy on changes:
-- Editing `content/cv.md` or any `src/**` file and pushing to your repo triggers a new build in Coolify; the `/cv` page updates automatically.
+- Editing `cv.md` or any `src/**` file and pushing to your repo triggers a new build in Coolify; the `/cv` page updates automatically.
 
 ## Operating the Content
 
-- Edit the CV in `content/cv.md`.
-- Run locally: `npm run dev` (content syncs to `/cv` automatically)
+- Edit the CV in `cv.md` at the repo root.
+- Run locally: `npm run dev` (the CV syncs to `/cv` automatically)
 - Build/deploy: `npm run build` (syncs, then writes static HTML to `dist/`)
 - In Docker/Coolify, the same sync happens during the image build.
 
 Photos:
-- Place images in `content/photos/` (PNG/JPG/JPEG/WebP/GIF). They’ll be copied to `public/photos/` when you run sync/dev/build.
+- Place images in `photos/` (PNG/JPG/JPEG/WebP/GIF). They’ll be copied to `public/photos/` when you run sync/dev/build.
 - The gallery and hero use a generated manifest at `src/data/photos.json`.
 
 ## Configuration & Branding
@@ -128,6 +128,6 @@ Photos:
 
 ## Security
 
-- Photos: avoid publishing sensitive EXIF/metadata (e.g., GPS). Recommended: strip EXIF before adding to `content/photos/` using a tool like `exiftool -all="" file.jpg` or your editor’s export settings. The sync step enforces extension/type checks, blocks symlinks, and skips oversized files.
+- Photos: avoid publishing sensitive EXIF/metadata (e.g., GPS). Recommended: strip EXIF before adding to `photos/` using a tool like `exiftool -all="" file.jpg` or your editor’s export settings. The sync step enforces extension/type checks, blocks symlinks, and skips oversized files.
 - CSP: inline scripts have been externalized; a single early theme snippet remains and is allowed via a strict SHA‑256 hash in the CSP header. If you modify that snippet in `src/layouts/Base.astro`, update the CSP hash in `nginx.conf`.
 - Docker context: secrets and cert material are excluded via `.dockerignore`. Terminate TLS at your platform if possible; otherwise, Nginx is configured with modern ciphers and headers.

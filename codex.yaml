@@ -9,14 +9,14 @@ guidance:
 
 scope:
   include:
-    - content/**
+    - cv.md
     - src/**
     - public/**
     - scripts/**
     - package.json
     - astro.config.mjs
     - Dockerfile
-    - ops/**
+    - nginx.conf
   exclude:
     - .git/**
     - dist/**
@@ -27,4 +27,4 @@ workflows:
   default:
     steps:
       - type: note
-        message: "Content-only; edit content/cv.md via patches."
+        message: "Content-only; edit cv.md via patches."

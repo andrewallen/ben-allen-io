@@ -7,9 +7,9 @@ import { execSync } from 'node:child_process';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = `${__dirname}/..`;
 
-const src = `${root}/content/cv.md`;
+const src = `${root}/cv.md`;
 const out = `${root}/src/pages/cv.md`;
-const photosSrc = `${root}/content/photos`;
+const photosSrc = `${root}/photos`;
 const photosOut = `${root}/public/photos`;
 const photosManifest = `${root}/src/data/photos.json`;
 const heroOut = `${root}/src/images/hero.png`;

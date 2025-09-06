@@ -71,4 +71,3 @@ Reliable Customer Assistant / Front‑of‑House (Sixth Form) with Food Hygiene 
 - Challenge 25 / age‑restricted sales: aware; follow ID policy and escalate when required
 - Interests: fitness (4+ years gym membership), football, content creation
 - References available on request
-
