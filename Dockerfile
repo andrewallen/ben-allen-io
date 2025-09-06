@@ -28,8 +28,8 @@ RUN addgroup -S nonroot && adduser -S nonroot -G nonroot \
     && chown -R nonroot:nonroot /var/cache/nginx /var/run /etc/nginx /usr/share/nginx/html
 
 # Nginx configuration
-COPY nginx-main.conf /etc/nginx/nginx.conf
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY ops/nginx/nginx-main.conf /etc/nginx/nginx.conf
+COPY ops/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Static site
 COPY --from=builder /app/dist /usr/share/nginx/html
