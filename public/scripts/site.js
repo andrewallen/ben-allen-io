@@ -51,19 +51,29 @@
       }
     } catch {}
 
-    // View Transitions for same-origin navigation (progressive)
+    // View Transitions for same-origin navigation (progressive; desktop only)
     try {
-      if ('startViewTransition' in document) {
+      const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isMobile = matchMedia('(max-width: 980px)').matches;
+      const ua = navigator.userAgent || '';
+      const isIOS = /iP(hone|ad|od)/.test(ua) || (/Mobile/.test(ua) && /Safari/.test(ua));
+      const enableVT = ('startViewTransition' in document) && !prefersReduced && !isMobile && !isIOS;
+      if (enableVT) {
         const sameOrigin = (url) => {
           try { const u = new URL(url, location.href); return u.origin === location.origin; } catch { return false; }
         };
         addEventListener('click', (e) => {
+          if (e.defaultPrevented) return;
+          if (e.button !== 0) return; // left-click only
           const a = e.target && e.target.closest ? e.target.closest('a') : null;
           if (!a) return; if (a.target === '_blank' || a.hasAttribute('download')) return;
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // modifier navigation
           if (!sameOrigin(a.href)) return; // external link
           const url = new URL(a.href);
           if (url.pathname === location.pathname && url.hash) return; // in-page anchors
           e.preventDefault();
+          // Close the mobile menu if open
+          const menu = a.closest('details.nav'); if (menu) menu.open = false;
           document.startViewTransition(async () => { location.href = a.href; });
         });
       }

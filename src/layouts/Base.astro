@@ -101,7 +101,7 @@ const path = Astro.url.pathname;
         )}
       </div>
     </footer>
-    <script src="/scripts/theme.js" defer></script>
-    <script src="/scripts/site.js" defer></script>
+    <script src={buildStr ? `/scripts/theme.js?v=${(buildInfo && (buildInfo.commit || buildInfo.builtAt)) || ''}` : '/scripts/theme.js'} defer></script>
+    <script src={buildStr ? `/scripts/site.js?v=${(buildInfo && (buildInfo.commit || buildInfo.builtAt)) || ''}` : '/scripts/site.js'} defer></script>
   </body>
   </html>

@@ -1,5 +1,6 @@
 ---
 import data from "../data/shift.json";
+import buildInfo from "../data/build.json";
 type KPI = { label: string; value: string };
 type Step = { title: string; copy: string; image: string; alt?: string; caption?: string; kpi?: KPI[] };
 const steps = (Array.isArray(data) ? data : []) as Step[];
@@ -44,5 +45,5 @@ const first = steps[0];
       ))}
     </ol>
   </div>
-  <script src="/scripts/shiftstory2.js" defer></script>
+  <script src={buildInfo ? `/scripts/shiftstory2.js?v=${buildInfo.commit || buildInfo.builtAt}` : '/scripts/shiftstory2.js'} defer></script>
 </section>
