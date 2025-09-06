@@ -3,6 +3,7 @@
   if(!roots.length) return;
   var prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var smallScreen = matchMedia('(max-width: 980px)').matches;
+  if (smallScreen) return; // Use simplified mobile variant; skip observers entirely
   roots.forEach(function(root){
     var media = root.querySelector('[data-media]');
     var caption = root.querySelector('[data-caption]');

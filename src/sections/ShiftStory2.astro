@@ -47,3 +47,26 @@ const first = steps[0];
   </div>
   <script src={buildInfo ? `/scripts/shiftstory2.js?v=${buildInfo.commit || buildInfo.builtAt}` : '/scripts/shiftstory2.js'} defer></script>
 </section>
+
+<!-- Mobile-friendly version: inline images per step, no dot map -->
+<section class="story2-mobile" aria-label="A day in the life (mobile)">
+  <ol>
+    {steps.map((s, i) => (
+      <li class="mstep" id={`mstep-${i}`}>
+        <figure>
+          <img src={`/photos/${s.image}`} alt={s.alt || s.title} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
+          {s.caption && <figcaption class="muted">{s.caption}</figcaption>}
+        </figure>
+        <h3>{s.title}</h3>
+        {s.kpi && s.kpi.length > 0 && (
+          <div class="kpis">
+            {s.kpi.map(k => (
+              <span class="kpi" aria-label={`${k.label}: ${k.value}`}><strong>{k.value}</strong> {k.label}</span>
+            ))}
+          </div>
+        )}
+        <p class="muted">{s.copy}</p>
+      </li>
+    ))}
+  </ol>
+</section>
