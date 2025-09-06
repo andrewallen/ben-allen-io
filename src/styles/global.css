@@ -319,6 +319,10 @@ small{ font-size: var(--step--1); }
   .story-media, .story2-media, .story2-map{ position: static; top: auto; }
   .story2{ gap: 16px; }
   .story2-media figure{ max-width: 100%; }
+  /* Force-hide desktop scroller on mobile (belt-and-braces) */
+  section.story2{ display: none !important; }
+  .story2-map{ display: none !important; }
+  .story2-media{ display: none !important; }
 }
 
 /* Mobile-first simplified scrollytelling variant */
@@ -328,9 +332,14 @@ small{ font-size: var(--step--1); }
 .story2-mobile .mstep img{ width:100%; height:auto; display:block; border-radius: var(--radius); border:1px solid var(--border); box-shadow: var(--shadow); }
 .story2-mobile .mstep h3{ margin: 6px 0 6px; }
 .story2-mobile .kpis{ display:flex; gap:8px; flex-wrap:wrap; margin: 4px 0 6px; }
+/* Default visibility helpers */
+.desktop-only{ display:block; }
+.mobile-only{ display:none; }
 @media (max-width: 980px){
-  .story2{ display:none; }
-  .story2-mobile{ display:block; }
+  .story2{ display:none !important; }
+  .story2-mobile{ display:block !important; }
+  .desktop-only{ display:none !important; }
+  .mobile-only{ display:block !important; }
 }
 
 /* Testimonials & badges */

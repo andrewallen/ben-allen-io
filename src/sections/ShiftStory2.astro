@@ -6,7 +6,7 @@ type Step = { title: string; copy: string; image: string; alt?: string; caption?
 const steps = (Array.isArray(data) ? data : []) as Step[];
 const first = steps[0];
 ---
-<section class="story2" data-story2>
+<section class="story2 desktop-only" data-story2>
   <aside class="story2-map" aria-label="Shift map">
     <ol>
       {steps.map((s, i) => (
@@ -49,7 +49,7 @@ const first = steps[0];
 </section>
 
 <!-- Mobile-friendly version: inline images per step, no dot map -->
-<section class="story2-mobile" aria-label="A day in the life (mobile)">
+<section class="story2-mobile mobile-only" aria-label="A day in the life (mobile)">
   <ol>
     {steps.map((s, i) => (
       <li class="mstep" id={`mstep-${i}`}>
