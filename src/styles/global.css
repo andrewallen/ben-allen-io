@@ -59,6 +59,10 @@ body{
               radial-gradient(800px 400px at -10% 0%, color-mix(in hsl, var(--accent) 3%, transparent) 0%, transparent 60%),
               linear-gradient(180deg, var(--bg), var(--surface));
 }
+/* Ensure consistent sizing and prevent horizontal scroll/rocking on mobile */
+*, *::before, *::after{ box-sizing: border-box; }
+html, body{ max-width: 100%; overflow-x: hidden; overscroll-behavior-x: none; touch-action: pan-y; }
+main, .story, .story2{ touch-action: pan-y; }
 .skip-link{ position:absolute; left:12px; top:8px; transform: translateY(-200%); background: color-mix(in hsl, var(--surface) 96%, transparent); color: var(--text); border: 2px solid color-mix(in hsl, var(--ring) 50%, transparent); border-radius: 10px; padding: 10px 14px; z-index: 100; box-shadow: var(--shadow); text-decoration: none; font-weight: 700; }
 .skip-link:focus-visible{ transform: translateY(0); outline: 2px solid color-mix(in hsl, var(--ring) 60%, transparent); outline-offset: 2px; }
 .reveal{ animation: fadeUp var(--dur-2) var(--ease-1) both; }
